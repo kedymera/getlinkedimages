@@ -41,7 +41,7 @@ def getlinkedimages(url: str) -> int:
     imgcount = 0
     tstart = perf_counter()
     for link in soup.findAll("a"):
-        if not link["href"].endswith(".jpg"):
+        if not link.has_attr("href") or not link["href"].endswith(".jpg"):
             continue
         imgcount += 1
         imgurl = urljoin(url, link["href"])
