@@ -24,7 +24,7 @@ def getfoldername(url: str, title: str) -> str:
     )
 
 
-def getlinkedimages(url: str) -> int:
+def getlinkedimages(url: str, foldername: str|None) -> int:
     from requests import get
     from bs4 import BeautifulSoup as bs
     from os import mkdir, path
@@ -33,8 +33,9 @@ def getlinkedimages(url: str) -> int:
     page = get(url)
     soup = bs(page.text, features="lxml")
 
-    title = prettytitle(soup.title)
-    foldername = getfoldername(url, title)
+    if not foldername:
+        title = prettytitle(soup.title)
+        foldername = getfoldername(url, title)
     mkdir(foldername)
 
     size = 0
@@ -61,7 +62,11 @@ def main():
     if len(argv) < 2:
         return 1
 
-    return getlinkedimages(argv[1])
+    customfoldername = None
+    if len(argv) == 3:
+        customfoldername = argv[2]
+
+    return getlinkedimages(argv[1], customfoldername)
 
 if __name__ == "__main__":
     exit(main())
